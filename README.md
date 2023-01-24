@@ -1,7 +1,11 @@
 # React-Phaser
 
 [https://github.com/4rokis/react-phaser-example](https://github.com/4rokis/react-phaser-example)
+  
+## Demo
+![demo preview](images/react-phaser.gif "Title")
 
+## Docs
 There are multiple reasons why you might want to combine **React** with **Phaser.** One of them being that you have a bigger React application and only a certain scene/part is a canvas.
 
 <aside>
