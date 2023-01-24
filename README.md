@@ -109,7 +109,7 @@ This solution works well with [PIXI.js](https://pixijs.com/) or a custom canvas 
 
 ## ****Kudos****
 
-Architecture, Code, and Configs come from **[Style Space](https://wwwh.stylespace.com/?utm_medium=arokis-blog)***Connect with expert stylists, over 1-on-1 video styling sessions for clothing, hair, and makeup/skincare styling. Elevate your style, simplify getting ready and save time and money.*
+Architecture, Code, and Configs come from **[Style Space](https://www.stylespace.com/?utm_medium=arokis-blog)***Connect with expert stylists, over 1-on-1 video styling sessions for clothing, hair, and makeup/skincare styling. Elevate your style, simplify getting ready and save time and money.*
 
 ## ****Links****
 
