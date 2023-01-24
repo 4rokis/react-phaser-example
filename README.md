@@ -1,70 +1,110 @@
-# Getting Started with Create React App
+# React-Phaser
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[https://github.com/4rokis/react-phaser-example](https://github.com/4rokis/react-phaser-example)
 
-## Available Scripts
+There are multiple reasons why you might want to combine **React** with **Phaser.** One of them being that you have a bigger React application and only a certain scene/part is a canvas.
 
-In the project directory, you can run:
+<aside>
+💡 Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers.
 
-### `npm start`
+</aside>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+React application then can either passively render a canvas or actively send new data to it.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+React application re-renders multiple times and that is not desired for canvas base library. To mitigate that we are creating a component that will bridge those two environments.
 
-### `npm test`
+```jsx
+export const ROOT_ID = 'root-id'
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+const Root = memo(() => {
+  return <div id={ROOT_ID} />
+})
 
-### `npm run build`
+class PhaserApp {
+  constructor(id) {
+    this.game = new Phaser.Game({
+      type: Phaser.AUTO,
+      width: 1000,
+      height: 1000,
+      parent: ROOT_ID,
+    })
+  }
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  destroy = () => {
+    this.game.destroy(true)
+  }
+}
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+export const PhaserBridge = () => {
+  const app = useRef(null)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  useLayoutEffect(() => {
+    app.current = new PhaserApp(ROOT_ID)
 
-### `npm run eject`
+    return () => {
+      app.current?.destroy()
+    }
+  }, [])
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+  return <Root />
+}
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+useLayoutEffect will ensure that PhaserApp is initialized only once and is destroyed on unmount.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+We can upgrade the bridge to include an update logic to emit an event to Phaser.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```jsx
+export class PhaserApp {
+  ...
+  update = (direction) => {
+    this.game.events.emit('update', direction)
+  }
+  ...
+}
 
-## Learn More
+export const PhaserBridge = ({ direction }) => {
+  ...
+  useEffect(() => {
+    if (!app.current) {
+      return
+    }
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+    app.current.update(direction)
+  }, [direction])
+  ...
+}
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+PhaserBridge now includes a useEffect hook that waits for the prop direction to change. Once changed it will trigger the update method with it. The update method then emits an update event to the whole phaser app.
+A phaser scene can then listen to it and update.
 
-### Code Splitting
+```jsx
+this.game.events.on('update', (direction) => {
+  this.direction = direction
+})
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+React app just needs to render the bridge with particular properties.
 
-### Analyzing the Bundle Size
+```jsx
+function App() {
+  const [direction, setDirection] = useState(null)
+  return (
+    <div className="App">
+      <AppBridge direction={direction} />
+    </div>
+  );
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+This solution works well with [PIXI.js](https://pixijs.com/) or a custom canvas solution.
 
-### Making a Progressive Web App
+## ****Kudos****
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Architecture, Code, and Configs come from **[Style Space](https://wwwh.stylespace.com/?utm_medium=arokis-blog)***Connect with expert stylists, over 1-on-1 video styling sessions for clothing, hair, and makeup/skincare styling. Elevate your style, simplify getting ready and save time and money.*
 
-### Advanced Configuration
+## ****Links****
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- [https://phaser.io](https://phaser.io/)
+- [https://arokis.me/articles/react-phaser](https://arokis.me/articles/react-phaser)

@@ -7,6 +7,7 @@ export class PhaserApp {
       type: Phaser.AUTO,
       width,
       height,
+      backgroundColor: '#efefef',
       parent: id,
       scene: [MainScene]
     })
