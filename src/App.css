@@ -1,0 +1,18 @@
+.App {
+  text-align: center;
+}
+
+.control {
+  position: fixed;
+  display: flex;
+  bottom: 60px;
+  width: 100%;
+  justify-content: center;
+  gap: 16px;
+}
+
+button {
+  padding: 10px;
+}
+
+
