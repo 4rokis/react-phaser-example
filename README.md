@@ -1,8 +1,11 @@
 # React-Phaser
 
+[Demo](https://react-phaser-example.vercel.app)
+  
 [https://github.com/4rokis/react-phaser-example](https://github.com/4rokis/react-phaser-example)
   
-## Demo
+## Preview
+
 ![demo preview](images/react-phaser.gif "Title")
 
 ## Docs
